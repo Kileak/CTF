@@ -8,12 +8,12 @@
 
 The challenge page has a login and register page. Sure enough, we need to login as admin. Though trying to register as an admin results in "User already exists". But the register page fails to check the length of the username correctly when storing it.
 
-So if we create a username with a length > 500, the check, if the user already exists will pass, but it will cut off the last characters when "storing" it.
+So if we create a username with a length > 32, the check, if the user already exists will pass, but it will cut off the last characters when "storing" it.
 
 So creating a user like:
 
 ```
-User: "admin(lots of spaces => 495)a"
+User: "admin(lots of spaces)a"
 
 Password: abc
 ```
