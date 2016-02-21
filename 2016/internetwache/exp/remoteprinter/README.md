@@ -1,8 +1,8 @@
-# Internetwache 2016 - Exploit - Remote Printer - 80 pts
+# IWCTF 2016 - Exploit - Remote Printer - 80 pts
 
 > Description: Printer are very very important for offices. Especially for remote printing. My boss told me to build a tool for that task.
 >
-> Attachment: exp80.zip
+> Attachment: [exp80.zip](exp80.zip)
 >
 > Service: 188.166.133.53:12377 
 

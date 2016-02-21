@@ -1,4 +1,4 @@
-# Internetwache 2016 - Code - A numbers game - 50 pts
+# IWCTF 2016 - Code - A numbers game - 50 pts
 
 > Description: People either love or hate math. Do you love it? Prove it! You just need to solve a bunch of equations without a mistake.
 >

@@ -1,4 +1,4 @@
-# Internetwache 2016 - Misc - 404 Flag not found - 80 pts
+# IWCTF 2016 - Misc - 404 Flag not found - 80 pts
 
 > Description: I tried to download the flag, but somehow received only 404 errors :( Hint: The last step is to look for flag pattern.
 >

@@ -1,4 +1,4 @@
-# Internetwache 2016 - Code - A numbers game II - 70 pts
+# IWCTF 2016 - Code - A numbers game II - 70 pts
 
 > Description: Math is used in cryptography, but someone got this wrong. Can you still solve the equations? Hint: You need to encode your answers.
 >

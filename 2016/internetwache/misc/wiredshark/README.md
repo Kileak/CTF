@@ -1,4 +1,4 @@
-# Internetwache 2016 - Rock with the wired shark! - 70 pts
+# IWCTF 2016 - Rock with the wired shark! - 70 pts
 
 > Description: Sniffing traffic is fun. I saw a wired shark. Isn't that strange?
 >

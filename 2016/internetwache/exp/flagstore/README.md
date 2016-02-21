@@ -1,4 +1,4 @@
-# Internetwache 2016 - Exploit - FlagStore - 70 pts
+# IWCTF 2016 - Exploit - FlagStore - 70 pts
 
 > Description: Here's the ultimate flag store. Store and retrieve your flags whenever you want.
 >

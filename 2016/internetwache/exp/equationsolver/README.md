@@ -1,4 +1,4 @@
-# Internetwache 2016 - Exploit - EquationSolver - 60 pts
+# IWCTF 2016 - Exploit - EquationSolver - 60 pts
 
 >  Description: I created a program for an unsolveable equation system. My friend somehow forced it to solve the equations. Can you tell me how he did it?
 >

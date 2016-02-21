@@ -1,4 +1,4 @@
-# Internetwache 2016 - Reversing - SPIM - 50 pts
+# IWCTF 2016 - Reversing - SPIM - 50 pts
 
 > Description: My friend keeps telling me, that real hackers speak assembly fluently. Are you a real hacker? Decode this string: "IVyN5U3X)ZUMYCs"
 >

@@ -1,4 +1,4 @@
-# Internetwache 2016 - Exploit - Sh-ock - 90 pts
+# IWCTF 2016 - Exploit - Sh-ock - 90 pts
 
 > Description: This is some kind of weird thing. I am sh-ocked.
 
