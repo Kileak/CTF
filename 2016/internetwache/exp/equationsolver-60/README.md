@@ -1,3 +1,0 @@
-# Internetwache 2016 - EquationSolver - exp60
-
-Coming up...
