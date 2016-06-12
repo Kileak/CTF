@@ -28,7 +28,7 @@ $l.a.v.e.
 [Function: eval]
 ```
 
-It seems to be some javascript interpreter. To make it a bit easier to communicate with the service, I wrote a (quick&dirty) python script, which reverses the input and adds the needed placeholders. It then occured, that the longer our command is, the more placeholders were needed (count of dots found by empirical analysis ;-))
+It seems to be some javascript interpreter. To make it a bit easier to communicate with the service, I wrote a (quick&dirty) python script, which reverses the input and adds the needed placeholders. It then occurred, that the longer our command is, the more placeholders were needed (count of dots found by empirical analysis ;-))
 
 ```python
 #!/usr/bin/python
