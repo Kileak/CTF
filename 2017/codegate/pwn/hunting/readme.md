@@ -5,15 +5,13 @@
 > Description: Hunting Monster
 >
 > ssh hunting@110.10.212.133 -p5555 (pw : hunting)
-> ssh hunting@110.10.212.133 -p5556 (pw : hunting)
-> ssh hunting@110.10.212.133 -p5557 (pw : hunting)at task.
 >
 > Attachment: [hunting](hunting) [xpl.py](xpl.py)
 >
 
 # Write-up
 
-The hunting binary turned out to be a little game, in which we had to kill a "boss". For this we were provided with different skills, which we can use against him. On every attack, he does a counter-attack and we're able to use a specific shield (ice, fire, wind). If our shield matches his attack, we won't lose any hitpoints. 
+The hunting binary turned out to be a little game, in which we had to kill a "boss". For this we were provided with different skills, which we could use against him. On every attack, he does a counter-attack and we're able to use a specific shield (ice, fire, wind). If our shield matches his attack, we won't lose any hitpoints. 
 
 Let's have a look at the disassembled parts of the binary:
 
@@ -159,7 +157,7 @@ So it basically just uses
 rand() & 3
 ```
 
-to calculate the attack the boss uses. 
+to calculate the attack, the boss will be using. 
 
 Since the random generator was initialized with the current time as seed, we should easily be able to guess the attack every time and use the appropriate shield by initializing our own random generator with the same time (which is just current time at process start).
 
@@ -363,7 +361,7 @@ So we need another approach to kill the boss faster. Let's check how the player 
 }
 ```
 
-In the executePlayerAttack function the skill we're currently  using, will be checked and depending on it, our damage will be calculated .
+In the executePlayerAttack function, it will check for the skill we're currently using and depending on it, our damage will be calculated .
 
 Just a quick peek at some skills and their calculations:
 
@@ -420,11 +418,11 @@ if ( useSkillLockObject )
 
 One of the most common examples of how **not** to implement "thread safety". Since we're multi-threading, the attack thread can suspend on every instruction, letting other threads (like the main thread) do something. 
 
-The attack thread will then check, if we're using a skill below or equal "4", and if so, subtracts its damage value from the boss hp (calling cdqe before, converting the damage value into a signed 64 bit value). If we're using a skill above 4 it won't convert the damage value and use the value as it is.
+The attack thread will then check, if we're using a skill below or equal "4", and if so, subtracts its damage value from the boss hp (**calling cdqe before, converting the damage value into a signed 64 bit value**). If we're using a skill above 4 it won't convert the damage value and use the value as it is.
 
 This means, if we're using icesword, the binary is using the second damage calculation, interpreting the value as 64 bit 0xFFFFFFFF (resulting in 4294967295 damage, which means nothing to the current boss hp). But if we would be able to get it to use the first calculation it would convert the damage of icesword to a qword resulting in a 64 bit 0xFFFFFFFFFFFFFFFF (resulting in -1 damage, which would then be suctracted, and thus gets **added** onto the boss hp). 
 
-Since the boss has  0x7FFFFFFFFFFFFFFF (9223372036854775807) HP  , adding 1 to it would let it "overflow" to 0x8000000000000000 (-9223372036854775808) HP, killing him instantenously.
+Since the boss has  0x7FFFFFFFFFFFFFFF (9223372036854775807) HP  , adding 1 to it, would let it "overflow" to 0x8000000000000000 (-9223372036854775808) HP, killing him instantenously.
 
 So what we need to do:
 
@@ -443,9 +441,9 @@ If we manage to do this in the correct timing, this should do the following:
 
 - Enter the boss attack thread, trying to execute fireball
 - The fireball calculation will create some minor damage value, then sleep 1 second (giving us time to send another input)
-- The boss attack thread will then check if we're using a skill below or equal to "4" (which fireball is)
+- The boss attack thread will then check, if we're using a skill below or equal to "4" (which fireball is)
 - While this is happening we're already switching our skill on the main thread to "Ice sword" and execute another attack
-- Since the damage from icesword will be calculated 1 second after fireball the chances are high, that we'll pass the "skill lock" and the "skill" check, and replace the player damage to "-1" just before subtracting it from the boss hp.
+- Since the damage from icesword will be calculated 1 second after fireball the chances are high, that we'll pass the "skill lock" and the "skill" check, and replace the player damage with 0xFFFFFFFF, which gets then converted to "-1"  just before subtracting it from the boss hp.
 
 ```python
 	 if playerLevel == 4:
@@ -481,7 +479,7 @@ If we manage to do this in the correct timing, this should do the following:
                 return
 ```
 
-Race conditions aren't always that predictable, but after two or three tries, the script resulted in a "boss kill", after which the binary rewarded us with another flag:
+Race conditions aren't always very predictable, but after two or three tries, the script resulted in a "boss kill", which rewarded us with another flag:
 
 
 ```bash
