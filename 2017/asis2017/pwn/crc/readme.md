@@ -38,13 +38,13 @@ int get_userinput_number()
 
 OK, we'll need some way to leak memory addresses in order to find LIBC and to read the canary. After that, it should be an easy task to use *get_userinput_number* to execute a rop chain.
 
-Took an educated guess there, that the crc functionality should be abused to leak some data ;-)
+Took an educated guess there, that the crc functionality should be abused to leak some data.
 
-And yep, another "buffer overflow" happened to arise when reading the data, that should be CRC'ed.
+Another "buffer overflow" happened to arise when reading the data, that should be CRC'ed.
 
 
 ```
-char s; 			// [sp+4h] [bp-84h]@1
+char s;		// [sp+4h] [bp-84h]@1
 char *ptrInput; 	// [sp+68h] [bp-20h]@1
 [SNIP]
 ptrInput = &s;
@@ -53,9 +53,9 @@ gets(&s);
 calcCrc(ptrInput, crcSize);
 ```
 
-So, if everything goes right, ptrInput is pointing to the string, the user entered and gets used as the argument for the CRC function. But since it's directly behind the input string (s) itself and *gets* is used, we can overwrite the pointer with some arbitrary address. With this we're able to create a checksum for the data that's stored at any address. A step forward, but still, we will only get the CRC value for the data at this address. Thus, we need a method to reverse it in order to get the original value that's stored there.
+So, if everything goes right, ptrInput is pointing to the string, the user entered and gets used as the argument for the CRC function. But since it's stored directly behind the input string (s) itself and *gets* is used, we can overwrite the pointer with some arbitrary address. With this, we're able to create a checksum for the data, that is stored at any address. But still, we will only get the CRC value for the data at this address. Thus, we need a method to reverse it in order to get the original value.
 
-To make this easier, we can pass a size of 1, so the CRC function will only calculate the checksum for one byte. We'll still need a way to reverse this but since we're now only considering one byte, there will be only 256 possible checksum values. This should be easy to brute force.
+To make this easier, we can pass a size of 1, so the CRC function will only calculate the checksum for one byte. We'll still need a way to reverse this, but since we're now only considering one byte, there will be only 256 possible checksum values. This should be easy to brute force.
 
 Ripped the CRC initialization method and the calculation method directly from the binary and created a short c script with it (see *crchelper.c*), which will generate a lookup table with the checksums for every possible byte.
 
@@ -95,7 +95,7 @@ def readAddress(address):
 
 Armed with this, we can read some got entry and calculate the libc base address with it. With libc at hand, we'll have for one access to more rop gadgets, than we'll ever need and we can also leak *__environ* with it. Since it will be stored at a fixed offset to the canary, we can then calculate the position of the canary on the stack.
 
-Having the address of the canary, we can just "de-crc" it the same way, and it should soon be game over for the service.
+Having the address of the canary, we can just "de-crc" it the same way:
 
 ```python
 EXITGOT = 0x08049fec
@@ -134,9 +134,9 @@ python xpl.py
 [+] Canary     : 0xfe381000
 ```
 
-Almost there... The buffer overflow in "get_userinput_function" should now be an easy victim. 
+The buffer overflow in "get_userinput_function" should now be an easy victim. 
 
-Used one_gadget to find a magic gadget in their libc to make things even easier.
+Used one_gadget to find a magic gadget in their libc to make things easier.
 
 ```
 $ one_gadget libc_32.so.6
