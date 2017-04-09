@@ -7,7 +7,7 @@
 
 >    nc 69.90.132.40 4002
     
-> Attachment: [crcme](crcme) [crchelper.c](crchelper.c) [xpl.py](xpl.py)
+> Attachment: [crcme](crcme) [crchelper.c](crchelper.c) [xpl.py](xpl.py) [libc_32.so.6](libc_32.so.6)
 >
 
 # Write-up
