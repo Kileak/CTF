@@ -1,4 +1,4 @@
-# BCTF 2017 Quals - pwn - babyuse
+# BCTF 2017 - pwn - babyuse
 
 > babyuse
 > nc 202.112.51.247 3456
